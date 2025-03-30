@@ -1,6 +1,8 @@
 #pragma once
 #include <iostream>
 #include "memory.hpp"
+#include "enum.hpp"
+
 using namespace std;
 
 Word::Word(Opcode _opc, int _ra, int _rb, int _p){

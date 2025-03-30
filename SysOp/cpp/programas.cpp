@@ -1,6 +1,7 @@
 #pragma once
 #include "memory.hpp"
 #include "programas.hpp"
+#include "enum.hpp"
 
 Program::Program(int s, string n, Word **i){
     size = s;
@@ -283,8 +284,8 @@ Programs::~Programs(){
             delete progs[i];
         delete progs;}
 
-Word **Programs::retrieveProgram(string pname){
+Program *Programs::retrieveProgram(string pname){
     for(int i = 0; i < size; i++)
         if (progs[i] && progs[i]->name == pname)
-            return progs[i]->image;
+            return progs[i];
     return nullptr;}

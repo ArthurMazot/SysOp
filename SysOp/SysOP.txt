@@ -3,16 +3,17 @@ Word
 Memory
 Program
 Programs
+HW
+SO
+
+modificar:
+//tão traduzidos mas pra funcionar como ele quer no trabalho tem que mudar algumas coisas
+InterruptHandling
+SysCallHandling
+Utilities
+CPU
 
 Falta traduzir:
 GM
 GP
 PCB
-InterruptHandling
-SysCallHandling
-Utilities
-CPU -> só fiz o construtor e o destrutor
-
-Não sei se compensa traduzir, mas são pequenos:
-HW -> só tem a Memory e CPU e não faz nada
-SO -> não sei pra que serve tudo que ele tem a CPU tmb tem

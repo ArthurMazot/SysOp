@@ -1,15 +1,7 @@
 #pragma once
+#include "enum.hpp"
 
-enum Opcode : int{
-    ___, DATA,
-    JMP, JMPI, JMPIG, JMPIL, JMPIE,
-    JMPIM, JMPIGM, JMPILM, JMPIEM,
-    JMPIGK, JMPILK, JMPIEK, JMPIGT,
-    ADDI, SUBI, ADD, SUB, MULT,
-    LDI, LDD, STD, LDX, STX, MOVE,
-    SYSCALL, STOP};
-
-struct Word{  
+struct Word{
     Opcode opc;
     int ra;
     int rb;

@@ -1,9 +1,12 @@
 #pragma once
 #include <iostream>
 #include "memory.hpp"
+#include "enum.hpp"
+
 using namespace std;
 
 struct Program{
+    public:
     int size;
     string name;
     Word **image;
@@ -12,9 +15,10 @@ struct Program{
 };
 
 struct Programs{
+    public:
     int size;
     Program **progs;
     Programs();
     ~Programs();
-    Word **retrieveProgram(string);
+    Program *retrieveProgram(string);
 };
