@@ -54,10 +54,10 @@ Utilities::~Utilities(){}
 void Utilities::loadProgram(Program *p) {
 	Word *m = hw->mem->pos;
 	for (int i = 0; i < p->size; i++) {
-		m[i].opc = p->image[i]->opc;
-		m[i].ra = p->image[i]->ra;
-		m[i].rb = p->image[i]->rb;
-		m[i].p = p->image[i]->p;}}
+		m[i].opc = p->image[i].opc;
+		m[i].ra = p->image[i].ra;
+		m[i].rb = p->image[i].rb;
+		m[i].p = p->image[i].p;}}
 
 void Utilities::dump(Word &w){
 	cout << "[ " << w.opc << ", " << w.ra << ", " << w.rb << ", " << w.p << "]" << endl;}

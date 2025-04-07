@@ -6,9 +6,9 @@ struct Word{
     int ra;
     int rb;
     int p; 
-    Word(Opcode, int, int, int);
-    Word();
+    Word(Opcode=___, int=-1, int=-1, int=-1);
     ~Word();
+    void setWord(Opcode, int, int, int);
     void operator=(Word&);
 };
 

@@ -9,8 +9,8 @@ struct Program{
     public:
     int size;
     string name;
-    Word **image;
-    Program(int, string, Word**);
+    Word *image;
+    Program(int, string, Word*);
     ~Program();
 };
 

@@ -11,19 +11,16 @@ Word::Word(Opcode _opc, int _ra, int _rb, int _p){
 	rb = _rb;
 	p  = _p;}
 
-Word::Word(){
-    opc = ___;
-    ra = -1;
-	rb = -1;
-	p  = -1;}
-
 Word::~Word(){}
 
+void Word::setWord(Opcode _opc, int _ra, int _rb, int _p){
+    opc = _opc;
+	ra = _ra;
+	rb = _rb;
+	p  = _p;}
+
 void Word::operator=(Word &w){
-    opc = w.opc;
-    ra = w.ra;
-    rb = w.rb;
-    p = w.p;}
+    setWord(w.opc, w.ra, rb = w.rb, w.p);}
 
 //===================================//
 
