@@ -17,12 +17,19 @@ struct CPU{
     bool cpuStop;
     bool debug;
     Utilities *u;
+    PCB **executando;
+    int tamExec;
+    int tamPag;
 
-    CPU(Memory*, bool);
+    CPU(Memory*, bool, int);
     ~CPU();
+    void addExec(PCB*);
+    void rmExec(int);
+    void savePCB(PCB*);
+    void loadPCB(PCB*);
     void setAddressOfHandlers(InterruptHandling*, SysCallHandling*);
     void setUtilities(Utilities*);
-    bool legal(int);
+    bool legal(int, PCB*);
     bool testOverflow(int);
     void setContext(int);
     void run();

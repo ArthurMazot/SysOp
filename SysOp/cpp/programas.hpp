@@ -6,7 +6,6 @@
 using namespace std;
 
 struct Program{
-    public:
     int size;
     string name;
     Word *image;
@@ -15,7 +14,6 @@ struct Program{
 };
 
 struct Programs{
-    public:
     int size;
     Program **progs;
     Programs();

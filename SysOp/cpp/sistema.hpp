@@ -1,3 +1,4 @@
+#pragma once
 #include "memory.hpp"
 #include "programas.hpp"
 #include "cpu.hpp"
@@ -5,10 +6,21 @@
 #include "enum.hpp"
 
 struct Sistema{
+	int tamMem;
+	Memory *mem;
     HW *hw;
 	SO *so;
+	GP *gp;
 	Programs *progs;
-	Sistema(int);
+	Sistema(int, int);
     ~Sistema();
-	void run();
+	void NEW(string);
+	void rm(int);
+	void ps();
+	void dump(int);
+	void dumpM(int, int);
+	void exec(int);
+	void execAll();
+	void traceOn();
+	void traceOff();
 };

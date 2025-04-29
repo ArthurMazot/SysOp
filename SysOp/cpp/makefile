@@ -3,8 +3,8 @@ EXEC = app
 
 all: ${EXEC}
 
-${EXEC}: memory.o programas.o cpu.o hwso.o sistema.o main.o
-	@g++ -o ${EXEC} main.o sistema.o hwso.o cpu.o programas.o memory.o
+${EXEC}: memory.o programas.o GMGP.o cpu.o hwso.o sistema.o main.o
+	@g++ -o ${EXEC} main.o sistema.o hwso.o cpu.o GMGP.o programas.o memory.o
 
 main.o: main.cpp enum.hpp memory.hpp programas.hpp cpu.hpp hwso.hpp sistema.hpp
 	@g++ ${CFLAGS} main.cpp
@@ -18,6 +18,9 @@ hwso.o: hwso.cpp enum.hpp memory.hpp programas.hpp cpu.hpp hwso.hpp
 cpu.o: cpu.cpp enum.hpp memory.hpp programas.hpp cpu.hpp hwso.hpp
 	@g++ ${CFLAGS} cpu.cpp
 
+GMGP.o: GMGP.cpp GMGP.hpp programas.hpp memory.hpp
+	@g++ ${CFLAGS} GMGP.cpp
+
 programas.o: programas.cpp enum.hpp memory.hpp programas.hpp
 	@g++ ${CFLAGS} programas.cpp
 
@@ -28,7 +31,7 @@ run: ${EXEC}
 	@./${EXEC}
 
 cleanl:
-	@rm ${EXEC} -f main.o sistema.o hwso.o cpu.o programas.o memory.o
+	@rm ${EXEC} -f main.o sistema.o hwso.o cpu.o GMGP.o programas.o memory.o
 
 cleanw:
-	@del ${EXEC} main.o sistema.o hwso.o cpu.o programas.o memory.o
+	@del ${EXEC} main.o sistema.o hwso.o cpu.o GMGP.o programas.o memory.o

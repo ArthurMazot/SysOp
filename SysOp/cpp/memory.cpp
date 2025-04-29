@@ -20,7 +20,7 @@ void Word::setWord(Opcode _opc, int _ra, int _rb, int _p){
 	p  = _p;}
 
 void Word::operator=(Word &w){
-    setWord(w.opc, w.ra, rb = w.rb, w.p);}
+    setWord(w.opc, w.ra, w.rb, w.p);}
 
 //===================================//
 

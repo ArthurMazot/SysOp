@@ -5,9 +5,10 @@
 #include "hwso.hpp"
 #include "enum.hpp"
 
-HW::HW(int tamMem){
-			mem = new Memory(tamMem);
-			cpu = new CPU(mem, true);}
+HW::HW(int tamMem, int tamPag, GP *g, Memory *m){
+        gp = g;
+		mem = m;
+		cpu = new CPU(mem, true, tamPag);}
 
 HW::~HW(){
 	delete mem;
@@ -20,8 +21,9 @@ InterruptHandling::InterruptHandling(HW *_hw){
 
 InterruptHandling::~InterruptHandling(){}
 
-void InterruptHandling::handle(Interrupts irpt){
-	cout << "Interrupcao " << irpt << "pc: " << hw->cpu->pc << endl;}
+void InterruptHandling::handle(Interrupts irpt, int id){
+    hw->gp->desalocaProcesso(id);
+	cout << "Interrupcao " << irpt << endl << "pc: " << hw->cpu->pc << endl;}
 
 //===================================//
 
@@ -30,7 +32,8 @@ SysCallHandling::SysCallHandling(HW *_hw){
 
 SysCallHandling::~SysCallHandling(){}
 
-void SysCallHandling::stop(){
+void SysCallHandling::stop(int id){
+    hw->gp->desalocaProcesso(id);
     cout << "SYSCALL STOP" << endl;}
 
 void SysCallHandling::handle(){
@@ -80,7 +83,8 @@ void Utilities::loadAndExec(Program *p){
 
 //===================================//
 
-SO::SO(HW *hw){
+SO::SO(HW *hw, int tamP, int tamM, GP *g){
+    gp = g;
 	ih = new InterruptHandling(hw);
 	sc = new SysCallHandling(hw);
 	hw->cpu->setAddressOfHandlers(ih, sc);
