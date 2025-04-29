@@ -1,9 +1,11 @@
+#pragma once
 #include "memory.hpp"
 #include "programas.hpp"
 #include "cpu.hpp"
 #include "hwso.hpp"
 #include "enum.hpp"
 #include "sistema.hpp"
+
 
 Sistema::Sistema(int tamP, int tamM){
 	tamMem = tamM;

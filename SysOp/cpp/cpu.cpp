@@ -6,6 +6,8 @@
 #include "memory.hpp"
 #include "enum.hpp"
 
+extern char flag;
+
 CPU::CPU(Memory *_mem, bool _debug, int tamP){
     maxInt = 32767;
     minInt = -32767;
@@ -67,9 +69,11 @@ void CPU::setContext(int _pc){
 
 void CPU::run(){
     int count = 0, i = -1;
-    while(1){
+    while(flag){
         if(executando[i] && i >= 0) savePCB(executando[i]);
-        while(executando[++i] == nullptr) if(i >= tamExec) i = -1;
+        while(executando[++i] == nullptr) 
+            if(i >= tamExec) i = -1;
+            else if(flag == 0) return;
         cout << "Trocando para " << executando[i]->nome << endl;
         loadPCB(executando[i]);
         cpuStop = 0;
@@ -251,6 +255,5 @@ void CPU::run(){
                 cpuStop = 1;
                 count = 0;}
 
-            usleep(100000); //100ms
-            } //while(!cpuStop)
-        }} //while(1)
+            usleep(100000);} //100ms, while(!cpuStop)
+        }} //while(flag)

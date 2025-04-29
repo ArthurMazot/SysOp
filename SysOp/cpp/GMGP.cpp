@@ -80,5 +80,4 @@ char GP::criaProcesso(Program *prog){
 void GP::desalocaProcesso(int id){
     if(id <= prontos.size() && prontos[id-1]->exec){
         gm->desaloca(prontos[id-1]->tabPag);
-        prontos[id-1]->exec = 0; 
-        return;}}
+        prontos[id-1]->exec = 0;}}
