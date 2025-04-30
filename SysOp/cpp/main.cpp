@@ -1,7 +1,6 @@
 #pragma once
 #include <iostream>
 #include <thread>
-#include <mutex>
 #include "enum.hpp"
 #include "memory.hpp"
 #include "programas.hpp"
@@ -12,7 +11,6 @@
 using namespace std;
 
 char flag = 1;
-mutex m;
 
 void run(Sistema *s){
     s->hw->cpu->run();}
@@ -46,9 +44,7 @@ void interface(Sistema *s){
     else if(buff == "traceOff") s->traceOff();
     else if(buff == "clear") system("clear");
     else if(buff == "exit"){ 
-        m.lock();
         flag = 0;
-        m.unlock();
         break;}
     else cout << "Opção inválida" << endl;}}
 

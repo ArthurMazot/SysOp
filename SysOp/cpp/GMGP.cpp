@@ -14,22 +14,22 @@ int *GM::aloca(int qntIn){
     int tam = qntIn/tamPag + ((qntIn%tamPag) ? 1 : 0);
     int count = tam;
     for(int i = 0; (i < qntPag) && (count > 0); i++)
-        if(!pags[i])
+        if(pags[i] == 0)
             count--;
 
     if(count > 0) return 0;
     int *tabPag = (int*)malloc(tam*sizeof(int)+1);
-    for(int i = 1; count < tam; i++)
-        if(!pags[i]){
-            tabPag[++count] = i-1;
+    for(int i = 0; count < tam; i++)
+        if(pags[i] == 0){
+            tabPag[++count] = i;
             pags[i] = 1;}
 
     tabPag[0] = tam+1;
     return tabPag;}
 
 void GM::desaloca(int *tab){
-    for(int i = 1; i < tab[0]; i++)
-            pags[tab[i]] = 0;}
+    for(int i = 1; i < tab[0]; i++){
+            pags[tab[i]] = 0;}}
 
 //===================================//
 
