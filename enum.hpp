@@ -10,5 +10,10 @@ enum Opcode : int{
     SYSCALL, STOP};
 
 enum Interrupts : int{
-    noInterrupt, intEnderecoInvalido, intInstrucaoInvalida, intOverflow
+    noInterrupt, 
+    intEnderecoInvalido, 
+    intInstrucaoInvalida, 
+    intOverflow,
+    intSysCall,   // interrupção gerada pelo SYS_CALL
+    intEofIO      // interrupção disparada pelo dispositivo
 };

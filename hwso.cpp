@@ -4,8 +4,14 @@
 #include "cpu.hpp"
 #include "hwso.hpp"
 #include "enum.hpp"
+#include "IO.hpp"
+#include <mutex>
 
 extern char flag;
+
+extern GP*   gp;        
+extern CPU*  cpu;          
+extern PCB*  currentPCB;   
 
 HW::HW(Memory *m, int tamPag){
 		mem = m;
@@ -34,16 +40,49 @@ SysCallHandling::~SysCallHandling(){}
 void SysCallHandling::stop(){
     cout << "SYSCALL STOP" << endl;}
 
-void SysCallHandling::handle(){
-    cout << "SYSCALL pars: " << hw->cpu->reg[8] <<  " / " << hw->cpu->reg[9] << endl;
-
-    switch(hw->cpu->reg[8]){
-        case 1: // leitura ...
-                break;
-        case 2: // escrita - escreve o conteuodo da memoria na posicao dada em reg[9]
-                cout << "OUT: " << hw->mem->pos[hw->cpu->reg[9]].p << endl;
-                break;
-        default: cout << "  PARAMETRO INVALIDO" << endl;}}
+void SysCallHandling::handle() {
+    PCB* proc = currentPCB;
+    if (!proc) {
+        std::cerr << "[SysCallHandling] Aviso: currentPCB == nullptr\n";
+        return;
+    }
+    int syscallType = hw->cpu->reg[8];   // 1 = IN (leitura), 2 = OUT (escrita)
+    int virtualAddr = hw->cpu->reg[9];
+    int physicalAddr = hw->cpu->logicoFisico(virtualAddr, proc);
+    
+    IO req;
+    req.pid = proc->id;
+    if (syscallType == 1) {
+        // leitura (IN)
+        req.type = ioType::READ;
+    }
+    else if (syscallType == 2) {
+        req.type  = ioType::WRITE;
+        req.valueType = hw->cpu->reg[10];
+    }
+    else {
+        std::cerr << "[SysCallHandling] Parâmetro inválido em SYSCALL: "<< syscallType << "\n";
+        return;
+    }
+    req.address = physicalAddr;
+    {
+        std::lock_guard<mutex> lk(ioMutex);
+        ioQueue.push(req);
+    }
+    ioCv.notify_one();
+    proc->state = BLOCKED;
+    {
+        auto& rQ = gp->readyQueue;
+        auto& bQ = gp->blockedQueue;
+        auto  it = std::find(rQ.begin(), rQ.end(), proc);
+        if (it != rQ.end()) {
+            rQ.erase(it);
+            bQ.push_back(proc);
+        }
+    }
+    hw->cpu->irpt = intSysCall;
+}
+    
 
 //===================================//
 
@@ -100,15 +139,38 @@ void Escalonador::rmExec(int id){
     executando.erase(executando.begin() + i - 1);
     gp->desalocaProcesso(id);}
 
-void Escalonador::escalonadorRun(){
-    int i = 0;
-    while(flag){
-        if(executando.size() <= 0) continue;
-        if(i >= executando.size()) i = 0;
-        cout << "Trocando para " << executando[i]->nome << endl;
-        if(hw->cpu->run(executando[i])) rmExec(executando[i]->id);
-        i++;}}
+void Escalonador::escalonadorRun() {
+    while (flag) {
+        if (gp->readyQueue.empty()) {
+            continue;
+        }
+        PCB* p = gp->readyQueue.front();
+        gp->readyQueue.pop_front();
+        p->state = RUNNING;
+    
+        currentPCB = p;
+        int result = hw->cpu->run(p);
+        currentPCB = nullptr;
 
+        if (result == 0) {
+            if (p->state == RUNNING) {
+                p->state = READY;
+                gp->readyQueue.push_back(p);
+            }
+        }
+        else if (result == 1) {
+            if (p->state == RUNNING) {
+                p->state = TERMINATED;
+                gp->desalocaProcesso(p->id);
+            }
+        }
+        else if (result == 2) {
+            p->state = TERMINATED;
+            gp->desalocaProcesso(p->id);
+        }
+    }
+}
+    
 //===================================//
 
 SO::SO(HW *hw, Memory *m, int tamP, int tamM){
