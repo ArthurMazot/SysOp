@@ -38,7 +38,6 @@ PCB::PCB(int i, int *tab, string n, int of){
     id = i;
     tabPag = tab;
     offset = of;
-    state = NEW;
     exec = 1;}
 
 PCB::~PCB(){
@@ -74,22 +73,10 @@ char GP::criaProcesso(Program *prog){
             if((i == tabPag[0]-1) && (j == offset)) break;
             mem->pos[tabPag[i+1]*tamPag + j] = prog->image[i*tamPag + j];}
 
-    PCB *novo = new PCB(prontos.size()+1, tabPag, prog->name, offset);
-    novo->state = READY;           // já está pronto para ser escalonado
-    prontos.push_back(novo);
+    prontos.push_back(new PCB(prontos.size()+1, tabPag, prog->name, offset));
     return 1;}
 
 void GP::desalocaProcesso(int id){
     if(id <= prontos.size() && prontos[id-1]->exec){
-        PCB* p = prontos[id - 1];
-        gm->desaloca(p->tabPag);
-        p->exec = 0;
-        p->state = TERMINATED;
-
-        auto iterator = std::find(readyQueue.begin(), readyQueue.end(), p );
-        if(iterator != readyQueue.end()) readyQueue.erase(iterator);
-
-        auto iterator = std::find(blockedQueue.begin(), blockedQueue.end(), p );
-        if(iterator != blockedQueue.end()) blockedQueue.erase(iterator);
-    }
-}
+        gm->desaloca(prontos[id-1]->tabPag);
+        prontos[id-1]->exec = 0;}}
