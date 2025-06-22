@@ -52,7 +52,7 @@ Programs::Programs(){
     aux[17].setWord(STOP, -1, -1, -1);
     aux[18].setWord(DATA, -1, -1, -1);
     aux[19].setWord(DATA, -1, -1, -1);
-    progs[1] = new Program(19 ,"fatorialV2", aux); //programa 2
+    progs[1] = new Program(20 ,"fatorialV2", aux); //programa 2
 
     aux = (Word*)malloc(14*sizeof(Word));
     aux[0].setWord(LDI, 0, -1, 999);
@@ -217,8 +217,8 @@ Programs::Programs(){
 	aux[14].setWord(STOP, -1, -1, -1);
 	aux[15].setWord(DATA, -1, -1, -1);
     progs[6] = new Program(16, "PB", aux);
-    aux = (Word*)malloc(54*sizeof(Word)); //programa 7
 
+    aux = (Word*)malloc(54*sizeof(Word)); //programa 7
     aux[0].setWord(LDI, 7, -1, 5);
 	aux[1].setWord(LDI, 6, -1, 5);
 	aux[2].setWord(LDI, 5, -1, 46);

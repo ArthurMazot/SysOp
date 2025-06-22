@@ -22,6 +22,10 @@ void Word::setWord(Opcode _opc, int _ra, int _rb, int _p){
 void Word::operator=(Word &w){
     setWord(w.opc, w.ra, w.rb, w.p);}
 
+ostream &operator<<(ostream &out, Word &w){
+    out << "[" << w.opc << ", " << w.ra << ", " << w.rb << ", " << w.p << "]";
+	return out;}
+
 //===================================//
 
 Memory::Memory(int s){

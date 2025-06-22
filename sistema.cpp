@@ -6,26 +6,29 @@
 #include "enum.hpp"
 #include "sistema.hpp"
 
-Sistema::Sistema(int tamP, int tamM){
+Sistema::Sistema(int tamP, int tamMP, int tamMS){
 	tamPag = tamP;
-	mem = new Memory(tamM);
-	hw = new HW(mem, tamP);
-	so = new SO(hw, mem, tamP ,tamM);
+	memP = new Memory(tamMP);
+	memS = new Memory(tamMS);
+	hw = new HW(memP, memS, tamP);
+	so = new SO(hw, memP, memS, tamP ,tamMP, tamMS);
 	hw->cpu->setUtilities(so->utils);
-	progs = new Programs();}
+	progs = new Programs();
+	hw->cpu->usou = so->esc->gp->gm->usou;}
 
 Sistema::~Sistema(){
-	delete mem;
+	delete memP;
+	delete memS;
     delete hw;
     delete so;
     delete progs;}
 
-void Sistema::NEW(string s){//mutex
+void Sistema::NEW(string s){
 	if(!so->esc->gp->criaProcesso(progs->retrieveProgram(s)))
 		cout << "Não encontrei " << s << endl;
 	else cout << s << " Adicionado" << endl;}
 
-void Sistema::rm(int id){ //mutex
+void Sistema::rm(int id){
 	so->esc->gp->desalocaProcesso(id);}
 
 void Sistema::ps(){
@@ -40,38 +43,39 @@ void Sistema::dump(int id){
 	if(id <= prontos.size()){
 		cout << "ID: " << id << endl;
 		cout << "tabPag: [";
-		for(int j = 0; j < prontos[id-1]->tabPag[0]-1; j++)
-			cout << prontos[id-1]->tabPag[j+1] << ", "; 
-		cout << prontos[id-1]->tabPag[prontos[id-1]->tabPag[0]] << "]" << endl;
+		for(int j = 0; j < prontos[id-1]->tabPagP[0]-1; j++)
+			cout << prontos[id-1]->tabPagP[j+1] << ", "; 
+		cout << prontos[id-1]->tabPagP[prontos[id-1]->tabPagP[0]] << "]" << endl;
 		cout << "Nome: " << prontos[id-1]->nome << endl;
 		cout << "Pc: " << prontos[id-1]->pc << endl;
 		cout << "regs: [";
 		for(int j = 0; j < 9; j++)
 			cout << prontos[id-1]->regs[j] << ", "; 
 		cout << prontos[id-1]->regs[9] << "]" << endl;
-		if(prontos[id-1]->exec)
-		for(int j = 0; j < prontos[id-1]->tabPag[0]; j++)
-			dumpM(prontos[id-1]->tabPag[j+1]*tamPag, prontos[id-1]->tabPag[j+1]*tamPag + tamPag);
-		else cout << "Ja foi desalocado" << endl;}}
 
-void Sistema::dumpM(int inicio, int fim){
-	so->utils->dump(inicio, fim);}
+		cout << "Memoria Principal" << endl;
+		for(int j = 0; j < prontos[id-1]->tabPagP[0]; j++)
+			dumpMP(prontos[id-1]->tabPagP[j+1]*tamPag, prontos[id-1]->tabPagP[j+1]*tamPag + tamPag);
+		cout << "==============================" << endl;
+		cout << "Memoria Secundaria" << endl;
+		for(int j = 0; j < prontos[id-1]->tabPagP[0]; j++)
+			if(prontos[id-1]->tabPagS[j] != -1)
+				dumpMS(prontos[id-1]->tabPagS[j]*tamPag, prontos[id-1]->tabPagS[j]*tamPag + tamPag);
+		}}
 
-void Sistema::execAll(){ //mutex
+void Sistema::dumpMP(int inicio, int fim){
+	while(inicio < fim) cout << inicio << ": " << memP->pos[inicio++] << endl;}
+
+void Sistema::dumpMS(int inicio, int fim){
+	while(inicio < fim) cout << inicio << ": " << memS->pos[inicio++] << endl;}
+
+void Sistema::execAll(){
 	vector<PCB*> prontos = so->esc->gp->prontos;
 	for(int i = 0; i < prontos.size(); i++)
 		if(prontos[i]->exec)
 			exec(i+1);}
 
-void Sistema::exec(int id){ //mutex
+void Sistema::exec(int id){
 	vector<PCB*> prontos = so->esc->gp->prontos;
 	if(id <= prontos.size() && prontos[id-1]->exec)
 		so->esc->addExec(prontos[id-1]);}
-
-void Sistema::traceOn(){
-	cout << "traceOn" << endl;
-	so->esc->trace = 1;}
-
-void Sistema::traceOff(){
-	cout << "traceOff" << endl;
-	so->esc->trace = 0;}

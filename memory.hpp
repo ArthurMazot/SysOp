@@ -1,5 +1,7 @@
 #pragma once
+#include <iostream>
 #include "enum.hpp"
+using namespace std;
 
 struct Word{
     Opcode opc;
@@ -10,6 +12,7 @@ struct Word{
     ~Word();
     void setWord(Opcode, int, int, int);
     void operator=(Word&);
+    friend ostream &operator<<(ostream&, Word&);
 };
 
 struct Memory{

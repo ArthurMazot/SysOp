@@ -9,9 +9,10 @@ struct CPU;
 
 struct HW{
     public:
-    Memory *mem;
     CPU *cpu;
-    HW(Memory*, int);
+    Memory *memP;
+    Memory *memS;
+    HW(Memory*, Memory*, int);
     ~HW();
 };
 
@@ -19,14 +20,14 @@ struct InterruptHandling{
     HW *hw;
     InterruptHandling(HW*);
     ~InterruptHandling();
-    void handle(Interrupts);
+    void handle(Interrupts, PCB*);
 };
 
 struct SysCallHandling{
     HW *hw;
     SysCallHandling(HW*);
     ~SysCallHandling();
-    void stop();
+    void stop(PCB*);
     void handle();
 };
 
@@ -42,15 +43,19 @@ struct Utilities{
 
 struct Escalonador{
     vector<PCB*> executando;
+    vector<PCB*> bloqueado;
     HW *hw;
     GP *gp;
     char trace;
 
-    Escalonador(HW*, Memory*, int, int, char);
+    Escalonador(HW*, Memory*, Memory*, int, int, int, char);
     ~Escalonador();
     void addExec(PCB*);
     void rmExec(int);
+    void addBloq(PCB*);
+    void pageFaultRun();
     void escalonadorRun();
+    void IORun();
 };
 
 struct SO{
@@ -58,6 +63,6 @@ struct SO{
     SysCallHandling *sc;
     Utilities *utils;
     Escalonador *esc;
-    SO(HW*, Memory*, int, int);
+    SO(HW*, Memory*, Memory*, int, int, int);
     ~SO();
 };

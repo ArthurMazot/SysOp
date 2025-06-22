@@ -6,17 +6,16 @@
 #include "memory.hpp"
 #include "enum.hpp"
 
-CPU::CPU(Memory *_mem, bool _debug, int tamP){
+CPU::CPU(Memory *_mem, int tamP){
     maxInt = 32767;
     minInt = -32767;
     mem = _mem;
-    debug = _debug;
     tamPag = tamP;}
 
 CPU::~CPU(){}
 
 int CPU::logicoFisico(int e, PCB *p){
-    return p->tabPag[(e/tamPag)+1]*tamPag + e%tamPag;}
+    return p->tabPagS[(e/tamPag)]*tamPag + e%tamPag;}
 
 void CPU::savePCB(PCB *p){
     p->pc = pc;
@@ -29,7 +28,7 @@ void CPU::loadPCB(PCB *p){
         reg[i] = p->regs[i];}
 
 bool CPU::legal(int e, PCB *p){
-    if(e >= 0 && e < tamPag*(p->tabPag[0]-1) + (p->offset ? p->offset : tamPag))
+    if(e >= 0 && e < tamPag*(p->tabPagP[0]-1) + (p->offset ? p->offset : tamPag))
         return true;
     irpt = intEnderecoInvalido;
     return false;}
@@ -51,18 +50,19 @@ void CPU::setContext(int _pc){
     pc = _pc;
     irpt = noInterrupt;}
 
-int CPU::run(PCB *p){
+Interrupts CPU::run(PCB *p){
+    irpt = noInterrupt;
     int count = 0;
     loadPCB(p);
     while(count++ < 5){
         if(legal(pc, p)){
+            if(p->tabPagS[pc/tamPag] == -1){
+                p->end = pc;
+                savePCB(p);
+                p->irpt = pageFault;
+                return pageFault;}
+            usou[p->tabPagS[pc/tamPag]] = 1;
             ir = mem->pos[logicoFisico(pc, p)];
-            if(debug){
-                cout << "regs: ";
-                for (int i = 0; i < 10; i++)
-                    cout << "r[" << i << "]: " << reg[i];
-                cout << endl << "exec: ";
-                u->dump(ir);}
 
             switch (ir.opc){
                 case LDI:
@@ -72,30 +72,48 @@ int CPU::run(PCB *p){
 
                 case LDD:
                 if(legal(ir.p, p)){
+                    if(p->tabPagS[ir.p/tamPag] == -1){
+                        p->end = ir.p;
+                        savePCB(p);
+                        p->irpt = pageFault;
+                        return pageFault;}
                     reg[ir.ra] = mem->pos[logicoFisico(ir.p, p)].p;
                     pc++;}
                     break;
 
                 case LDX:
                     if(legal(reg[ir.rb], p)){
+                        if(p->tabPagS[reg[ir.rb]/tamPag] == -1){
+                            p->end = reg[ir.rb];
+                            savePCB(p);
+                            p->irpt = pageFault;
+                            return pageFault;}
                         reg[ir.ra] = mem->pos[logicoFisico(reg[ir.rb], p)].p;
                         pc++;}
                         break;
 
                 case STD:
                     if(legal(ir.p, p)){
+                        if(p->tabPagS[ir.p/tamPag] == -1){
+                            p->end = ir.p;
+                            savePCB(p);
+                            p->irpt = pageFault;
+                            return pageFault;}
                         int e = logicoFisico(ir.p, p);
                         mem->pos[e].opc = DATA;
                         mem->pos[e].p = reg[ir.ra];
-                        pc++;
-                        if(debug)
-                            u->dump(e,e+1);}
+                        pc++;}
                     break;
 
                 case STX:
                     if (legal(reg[ir.ra], p)){
+                        if(p->tabPagS[reg[ir.ra]/tamPag] == -1){
+                            p->end = reg[ir.ra];
+                            savePCB(p);
+                            p->irpt = pageFault;
+                            return pageFault;}
+                        
                         int e = logicoFisico(reg[ir.ra], p);
-                        cout << "Endereço Fisico: " << e << endl;
                         mem->pos[e].opc = DATA;
                         mem->pos[e].p = reg[ir.rb];
                         pc++;}
@@ -148,6 +166,11 @@ int CPU::run(PCB *p){
 
                 case JMPIM:
                     if(legal(ir.p,p))
+                        if(p->tabPagS[ir.p/tamPag] == -1){
+                            p->end = ir.p;
+                            savePCB(p);
+                            p->irpt = pageFault;
+                            return pageFault;}
                         pc = mem->pos[logicoFisico(ir.p, p)].p;
                     break;
 
@@ -183,19 +206,37 @@ int CPU::run(PCB *p){
 
                 case JMPIGM:
                     if(legal(ir.p, p)){
-                        if (reg[ir.rb] > 0) pc = mem->pos[logicoFisico(ir.p, p)].p;
+                        if (reg[ir.rb] > 0){
+                            if(p->tabPagS[ir.p/tamPag] == -1){
+                                p->end = ir.p;
+                                savePCB(p);
+                                p->irpt = pageFault;
+                                return pageFault;}
+                            pc = mem->pos[logicoFisico(ir.p, p)].p;}
                         else pc++;}
                     break;
 
                 case JMPILM:
                     if(legal(ir.p, p)){
-                        if(reg[ir.rb] < 0) pc = mem->pos[logicoFisico(ir.p, p)].p;
+                        if(reg[ir.rb] < 0){
+                            if(p->tabPagS[ir.p/tamPag] == -1){
+                                p->end = ir.p;
+                                savePCB(p);
+                                p->irpt = pageFault;
+                                return pageFault;}
+                            pc = mem->pos[logicoFisico(ir.p, p)].p;}
                         else pc++;}
                     break;
 
                 case JMPIEM:
                     if(legal(ir.p, p)){
-                        if(reg[ir.rb] == 0) pc = mem->pos[logicoFisico(ir.p, p)].p;
+                        if(reg[ir.rb] == 0){
+                            if(p->tabPagS[ir.p/tamPag] == -1){
+                                p->end = ir.p;
+                                savePCB(p);
+                                p->irpt = pageFault;
+                                return pageFault;}
+                            pc = mem->pos[logicoFisico(ir.p, p)].p;}
                         else pc++;}
                     break;
 
@@ -210,23 +251,25 @@ int CPU::run(PCB *p){
 
                 case SYSCALL:
                     sysCall->handle();
+                    irpt = IO;
                     pc++;
                     break;
 
                 case STOP:
-                    sysCall->stop();
-                    irpt = noInterrupt;
-                    return 2; //2 pra dizer que foi stop
+                    sysCall->stop(p);
+                    return Stop;
 
                 default:
                     irpt = intInstrucaoInvalida;
                     break;}} //fim switch e if(legal)
 
             if(irpt != noInterrupt){
-                ih->handle(irpt);
-                irpt = noInterrupt;
-                return 1;} //teve interrupção
+                ih->handle(irpt, p);
+                p->irpt = irpt;
+                savePCB(p);
+                return irpt;} //teve interrupção
 
-            usleep(100000);} //100ms, while(!cpuStop)
+            usleep(50000);} //50ms
             savePCB(p);
-            return 0;} //não teve interrupção
+            p->irpt = irpt;
+            return irpt;} //não teve interrupção

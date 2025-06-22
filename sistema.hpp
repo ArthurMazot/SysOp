@@ -7,19 +7,19 @@
 
 struct Sistema{
 	int tamPag;
-	Memory *mem;
+	Memory *memP;
+	Memory *memS;
     HW *hw;
 	SO *so;
 	Programs *progs;
-	Sistema(int, int);
+	Sistema(int, int, int);
     ~Sistema();
 	void NEW(string);
 	void rm(int);
 	void ps();
 	void dump(int);
-	void dumpM(int, int);
+	void dumpMP(int, int);
+	void dumpMS(int, int);
 	void exec(int);
 	void execAll();
-	void traceOn();
-	void traceOff();
 };

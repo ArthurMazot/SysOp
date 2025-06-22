@@ -4,38 +4,50 @@
 #include "programas.hpp"
 using namespace std;
 
-struct GM{
-    int tamPag;
-    int qntPag;
-    char *pags;
-
-    GM(int, int);
-    ~GM();
-    int *aloca(int);
-    void desaloca(int*);
-};
-
 struct PCB{
     string nome;
+    Interrupts irpt;
     char exec;
+    int end;
     int offset;
     int id;
-    int *tabPag;
+    int *tabPagP;
+    int *tabPagS;
     int regs[10];
     int pc;
 
-    PCB(int, int*, string, int);
+    PCB(int, int*, int*, string, int);
     ~PCB();
     friend ostream &operator<<(ostream&, PCB&);
 };
 
+struct GM{
+    PCB **processosMemS;
+    int tamPag;
+    int qntPagP;
+    int qntPagS;
+    char *pagsP;
+    char *usou;
+    int clock;
+
+    GM(int, int, int);
+    ~GM();
+    int *aloca(int);
+    int alocaMemSec(int*);
+    void desaloca(int*, int*, int*);
+};
+
+
 struct GP{
     int tamPag;
-    Memory *mem;
+    int *pagsS;
+    Memory *memP;
+    Memory *memS;
     vector<PCB*> prontos;
     GM *gm;
 
-    GP(Memory*, int, int);
+    GP(Memory*, Memory*, int, int, int);
+    void alocaMemSecundaria(PCB*);
     ~GP();
     char criaProcesso(Program*);
     void desalocaProcesso(int);

@@ -8,17 +8,17 @@ struct CPU{
     int maxInt;
     int minInt;
     int pc;
+    char *usou;
     Word ir;
     int reg[10];
     Interrupts irpt;
     Memory *mem;
     InterruptHandling *ih;
     SysCallHandling *sysCall;
-    bool debug;
     Utilities *u;
     int tamPag;
 
-    CPU(Memory*, bool, int);
+    CPU(Memory*, int);
     ~CPU();
     int logicoFisico(int e, PCB *p);
     void savePCB(PCB*);
@@ -28,5 +28,5 @@ struct CPU{
     bool legal(int, PCB*);
     bool testOverflow(int);
     void setContext(int);
-    int run(PCB*);
+    Interrupts run(PCB*);
 };
