@@ -4,6 +4,7 @@
 #include "cpu.hpp"
 #include "hwso.hpp"
 #include "enum.hpp"
+#include "IO.hpp"
 
 struct Sistema{
 	int tamPag;
@@ -11,6 +12,7 @@ struct Sistema{
     HW *hw;
 	SO *so;
 	Programs *progs;
+	IOGerenciamento *io;
 	Sistema(int, int);
     ~Sistema();
 	void NEW(string);

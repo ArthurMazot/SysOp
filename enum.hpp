@@ -10,5 +10,7 @@ enum Opcode : int{
     SYSCALL, STOP};
 
 enum Interrupts : int{
-    noInterrupt, intEnderecoInvalido, intInstrucaoInvalida, intOverflow
+    noInterrupt, intEnderecoInvalido, intInstrucaoInvalida, intOverflow, IOInterrupt
 };
+
+enum IOType {LEITURA, ESCRITA};

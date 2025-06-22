@@ -9,9 +9,6 @@
 #include "sistema.hpp"
 
 using namespace std;
-extern Sistema* sistema;
-
-enum IOType {LEITURA, ESCRITA};
 
 struct IO{
     int pid;

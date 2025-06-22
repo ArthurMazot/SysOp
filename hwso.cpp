@@ -22,7 +22,11 @@ InterruptHandling::InterruptHandling(HW *_hw){
 InterruptHandling::~InterruptHandling(){}
 
 void InterruptHandling::handle(Interrupts irpt){
-	cout << "Interrupcao " << irpt << endl << "pc: " << hw->cpu->pc << endl;}
+	cout << "Interrupcao " << irpt << endl << "pc: " << hw->cpu->pc << endl;
+    if (irpt == Interrupts::IOInterrupt) {
+        sistema->io->finalizarInterrupcao();
+    }
+}
 
 //===================================//
 
@@ -35,14 +39,19 @@ void SysCallHandling::stop(){
     cout << "SYSCALL STOP" << endl;}
 
 void SysCallHandling::handle(){
+    int code = hw->cpu->reg[8];
+    int addr = hw->cpu->reg[9];
+    PCB* p;
     cout << "SYSCALL pars: " << hw->cpu->reg[8] <<  " / " << hw->cpu->reg[9] << endl;
 
-    switch(hw->cpu->reg[8]){
+    switch(code){
         case 1: // leitura ...
-                break;
+            sistema->io->adicionaReq(p, LEITURA, addr);
+            break;
         case 2: // escrita - escreve o conteuodo da memoria na posicao dada em reg[9]
-                cout << "OUT: " << hw->mem->pos[hw->cpu->reg[9]].p << endl;
-                break;
+            sistema->io->adicionaReq(p, ESCRITA, addr);    
+            cout << "OUT: " << hw->mem->pos[hw->cpu->reg[9]].p << endl;
+            break;
         default: cout << "  PARAMETRO INVALIDO" << endl;}}
 
 //===================================//

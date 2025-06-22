@@ -12,13 +12,15 @@ Sistema::Sistema(int tamP, int tamM){
 	hw = new HW(mem, tamP);
 	so = new SO(hw, mem, tamP ,tamM);
 	hw->cpu->setUtilities(so->utils);
-	progs = new Programs();}
+	progs = new Programs();
+ 	io = new IOGerenciamento();}
 
 Sistema::~Sistema(){
 	delete mem;
     delete hw;
     delete so;
-    delete progs;}
+    delete progs;
+	delete io;}
 
 void Sistema::NEW(string s){//mutex
 	if(!so->esc->gp->criaProcesso(progs->retrieveProgram(s)))

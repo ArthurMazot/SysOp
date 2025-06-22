@@ -1,5 +1,7 @@
 #include "IO.hpp" 
  
+extern Sistema* sistema;
+
  /* Função para add uma nova requisição I/O */
 void IOGerenciamento::adicionaReq(PCB* pcb, IOType tipo, int address){
     unique_lock<mutex> lock(IOMutex);
@@ -28,7 +30,7 @@ void IOGerenciamento::threadIO(){
             cout << "Processo " << reqAtual.pid << "esperando  de entrada.!" << endl;
             cout << reqAtual.pid << endl;
         }else{
-            int valor = sistema->men->pos[reqAtual.address].p;
+            int valor = sistema->mem->pos[reqAtual.address].p;
             cout << "Processo " << reqAtual.pid << endl;
             cout << "SAIDA: " << valor << endl;
             gerarInterrupcao();
@@ -40,7 +42,7 @@ void IOGerenciamento::threadIO(){
 void IOGerenciamento::valorDeEntrada(int pid, int valor){
     unique_lock<mutex> lock(IOMutex);
     if(reqPendente && reqAtual.pid == pid && reqAtual.tipo == LEITURA){
-        sistema->men->pos[reqAtual.address].p = valor;
+        sistema->mem->pos[reqAtual.address].p = valor;
         cout << "Entrada adquirida para o processo " << pid << ": " << valor << endl;
         gerarInterrupcao();
     }

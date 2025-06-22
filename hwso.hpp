@@ -4,7 +4,7 @@
 #include "GMGP.hpp"
 #include "cpu.hpp"
 #include "enum.hpp"
-
+#include "IO.hpp"
 struct CPU;
 
 struct HW{
