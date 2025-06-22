@@ -1,4 +1,4 @@
-#pragma once
+//#pragma once
 #include "memory.hpp"
 #include "programas.hpp"
 #include "enum.hpp"
@@ -14,7 +14,7 @@ Program::~Program(){
 //===================================//
 
 Programs::Programs(){
-    size = 8;
+    size = 9;
     progs = (Program**)malloc(size*sizeof(Program*));
     Word *aux = (Word*)malloc(11*sizeof(Word));
 
@@ -283,15 +283,17 @@ auxIO[2].setWord(LDI,     8, -1,  2);     // r8 = 2  (código ESCRITA)
 auxIO[3].setWord(LDI,     9, -1,  5);     // r9 = 5  (endereço 5, dentro da página)
 auxIO[4].setWord(SYSCALL, -1, -1, -1);    // emite I/O
 auxIO[5].setWord(STOP,    -1, -1, -1);    // fim
-progs[7] = new Program(55, "test_write", auxIO);
+progs[8] = new Program(55, "test_write", auxIO);
 }
 
 
 Programs::~Programs(){
-    for(int i = 0; i < size; i++)
+    for(int i = 0; i < size; i++){
         if(progs[i])
             delete progs[i];
-        delete progs;}
+    }
+        delete progs;
+    }
 
 Program *Programs::retrieveProgram(string pname){
     for(int i = 0; i < size; i++)

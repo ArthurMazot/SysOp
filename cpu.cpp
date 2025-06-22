@@ -53,9 +53,9 @@ void CPU::setContext(int _pc){
 
 int CPU::run(PCB *p){
     int count = 0;
-    currentPCB = p;
     loadPCB(p);
-    while(count++ < 5){
+    p = currentPCB;
+    while(true){
         if(legal(pc, p)){
             ir = mem->pos[logicoFisico(pc, p)];
             if(debug){
@@ -70,7 +70,6 @@ int CPU::run(PCB *p){
                 reg[ir.ra] = ir.p;
                 pc++;
                 break;
-
                 case LDD:
                 if(legal(ir.p, p)){
                     reg[ir.ra] = mem->pos[logicoFisico(ir.p, p)].p;
@@ -211,14 +210,13 @@ int CPU::run(PCB *p){
 
                 case SYSCALL:
                     sysCall->handle();
-                     if (reg[8] == 1 || reg[8] == 2) {
-                    irpt = IOInterrupt;      
-                    savePCB(p);              // salva estado corrente
-                    return 1;                // retorna para escalonador trocar de processo
-    }
                     pc++;
+                    if (reg[8] == 1 || reg[8] == 2) {
+                        irpt = IOInterrupt;
+                        savePCB(p);
+                        return 1;
+                    }
                     break;
-
                 case STOP:
                     sysCall->stop();
                     irpt = noInterrupt;

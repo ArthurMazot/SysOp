@@ -22,6 +22,7 @@ struct CPU{
     bool debug;
     Utilities *u;
     int tamPag;
+   // irpt = noInterrupt;
 
     CPU(Memory*, bool, int);
     ~CPU();

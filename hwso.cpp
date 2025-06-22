@@ -41,7 +41,7 @@ void SysCallHandling::stop(){
 void SysCallHandling::handle(){
     int code = hw->cpu->reg[8];
     int addr = hw->cpu->reg[9];
-    PCB* p=hw->cpu->currentPCB; 
+    PCB* p = hw->cpu->currentPCB; 
     
     cout << "SYSCALL pars: " << hw->cpu->reg[8] <<  " / " << hw->cpu->reg[9] << endl;
 
