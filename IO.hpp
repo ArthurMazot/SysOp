@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <queue>
 #include <mutex>
@@ -7,6 +8,8 @@
 #include "enum.hpp"
 #include "cpu.hpp"
 #include "sistema.hpp"
+
+extern Sistema* sistema;
 
 using namespace std;
 

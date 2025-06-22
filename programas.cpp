@@ -273,7 +273,19 @@ Programs::Programs(){
 	aux[51].setWord(DATA, -1, -1, -1);
 	aux[52].setWord(DATA, -1, -1, -1);
 	aux[53].setWord(DATA, -1, -1, -1);
-    progs[7] = new Program(54, "PC", aux);} //programa 8
+    progs[7] = new Program(54, "PC", aux); //programa 8
+
+ // programa de teste de escrita em I/O
+Word *auxIO = (Word*)malloc(6*sizeof(Word));
+auxIO[0].setWord(LDI,     0, -1, 42);     // r0 = 42
+auxIO[1].setWord(STD,     0, -1,  5);     // mem[5] = 42  (válido: 5 < offset=6)
+auxIO[2].setWord(LDI,     8, -1,  2);     // r8 = 2  (código ESCRITA)
+auxIO[3].setWord(LDI,     9, -1,  5);     // r9 = 5  (endereço 5, dentro da página)
+auxIO[4].setWord(SYSCALL, -1, -1, -1);    // emite I/O
+auxIO[5].setWord(STOP,    -1, -1, -1);    // fim
+progs[7] = new Program(55, "test_write", auxIO);
+}
+
 
 Programs::~Programs(){
     for(int i = 0; i < size; i++)

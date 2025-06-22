@@ -53,6 +53,7 @@ void CPU::setContext(int _pc){
 
 int CPU::run(PCB *p){
     int count = 0;
+    currentPCB = p;
     loadPCB(p);
     while(count++ < 5){
         if(legal(pc, p)){
@@ -210,6 +211,11 @@ int CPU::run(PCB *p){
 
                 case SYSCALL:
                     sysCall->handle();
+                     if (reg[8] == 1 || reg[8] == 2) {
+                    irpt = IOInterrupt;      
+                    savePCB(p);              // salva estado corrente
+                    return 1;                // retorna para escalonador trocar de processo
+    }
                     pc++;
                     break;
 

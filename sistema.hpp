@@ -6,6 +6,10 @@
 #include "enum.hpp"
 #include "IO.hpp"
 
+class HW;
+class SO;
+class IOGerenciamento;
+
 struct Sistema{
 	int tamPag;
 	Memory *mem;

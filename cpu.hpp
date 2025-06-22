@@ -4,10 +4,15 @@
 #include "memory.hpp"
 #include "enum.hpp"
 
+class InterruptHandling;
+class SysCallHandling;
+class Utilities;
+
 struct CPU{
     int maxInt;
     int minInt;
     int pc;
+    PCB* currentPCB;
     Word ir;
     int reg[10];
     Interrupts irpt;

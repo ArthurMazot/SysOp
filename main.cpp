@@ -1,4 +1,3 @@
-#pragma once
 #include <iostream>
 #include <thread>
 #include "enum.hpp"
@@ -8,6 +7,9 @@
 #include "hwso.hpp"
 #include "sistema.hpp"
 #include "IO.hpp"
+
+Sistema* sistema = nullptr;
+
 using namespace std;
 
 int tamPag = 8;
@@ -53,11 +55,17 @@ void interface(Sistema *s){
 int main(){
     system("clear");
     Sistema *s = new Sistema(tamPag, tamMem); //tamPag, tamMem
-    IOGerenciamento* io = new IOGerenciamento();
+    sistema = s;
+    sistema->io = new IOGerenciamento(); 
     
+
     thread p1 (interface, s);
     thread p2 (run, s);
-    thread ioThread(&IOGerenciamento::valorDeEntrada, io);
+    thread t(&IOGerenciamento::threadIO, sistema->io);
+    t.detach();
   
     p1.join();
-    p2.join();}
+    p2.join();
+
+    return 0;
+}

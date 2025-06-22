@@ -24,7 +24,7 @@ InterruptHandling::~InterruptHandling(){}
 void InterruptHandling::handle(Interrupts irpt){
 	cout << "Interrupcao " << irpt << endl << "pc: " << hw->cpu->pc << endl;
     if (irpt == Interrupts::IOInterrupt) {
-        sistema->io->finalizarInterrupcao();
+        sistema->io->InterrupcaoFinalizada();
     }
 }
 
@@ -41,7 +41,8 @@ void SysCallHandling::stop(){
 void SysCallHandling::handle(){
     int code = hw->cpu->reg[8];
     int addr = hw->cpu->reg[9];
-    PCB* p;
+    PCB* p=hw->cpu->currentPCB; 
+    
     cout << "SYSCALL pars: " << hw->cpu->reg[8] <<  " / " << hw->cpu->reg[9] << endl;
 
     switch(code){

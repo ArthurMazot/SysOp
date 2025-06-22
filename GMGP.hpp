@@ -3,7 +3,7 @@
 #include "memory.hpp"
 #include "programas.hpp"
 using namespace std;
-
+enum class ProcessState { NEW, READY, RUNNING, BLOCKED, TERMINATED };
 struct GM{
     int tamPag;
     int qntPag;
@@ -23,6 +23,7 @@ struct PCB{
     int *tabPag;
     int regs[10];
     int pc;
+    ProcessState state;
 
     PCB(int, int*, string, int);
     ~PCB();

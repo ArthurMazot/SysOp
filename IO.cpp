@@ -1,18 +1,18 @@
 #include "IO.hpp" 
  
-extern Sistema* sistema;
 
  /* Função para add uma nova requisição I/O */
 void IOGerenciamento::adicionaReq(PCB* pcb, IOType tipo, int address){
     unique_lock<mutex> lock(IOMutex);
     filaRequisicoes.push( {pcb->id, tipo, address});
     filaBloqueados.push(pcb);
-    pcb->state = BLOCKED;
+    pcb->state = ProcessState::BLOCKED;
     cout << "Requição de IO add ao processo.!" << pcb->id << endl;
     cvNewRequesicao.notify_one();
     }
 
 void IOGerenciamento::threadIO(){
+    cout << "[IO] threadIO iniciada e aguardando requisições...\n";
     while(true){
         unique_lock<mutex> lock(IOMutex);
         cvNewRequesicao.wait(lock, [&]() { return !filaRequisicoes.empty(); });
@@ -78,5 +78,6 @@ void IOGerenciamento::InterrupcaoFinalizada(){
 }
 
 void IOGerenciamento::gerarInterrupcao(){
+    cout << "[IO] gerarInterrupcao() chamada\n";
     sistema->so->ih->handle(Interrupts::IOInterrupt);
 }
