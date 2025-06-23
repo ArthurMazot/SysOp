@@ -1,6 +1,5 @@
 #pragma once
 #include <unistd.h>
-#include <mutex>
 #include "memory.hpp"
 #include "programas.hpp"
 #include "cpu.hpp"
@@ -9,7 +8,6 @@
 
 extern char debug;
 extern char flag;
-mutex mtxBloq;
 
 HW::HW(Memory *mp, Memory *ms, int tamPag){
     memP = mp;
@@ -136,7 +134,6 @@ void Escalonador::pageFaultRun(){
     int i = 0;
     PCB *p;
     while(flag){
-		//lock_guard<mutex> lock(mtxBloq);
         if(bloqueado.size() <= 0) continue;
         if(i >= bloqueado.size()) i = 0;
         p = bloqueado[i];
@@ -156,7 +153,6 @@ void Escalonador::IORun(){
     int i = 0;
     PCB *p;
     while(flag){
-		//lock_guard<mutex> lock(mtxBloq);
         if(bloqueado.size() <= 0) continue;
         if(i >= bloqueado.size()) i = 0;
         p = bloqueado[i];
