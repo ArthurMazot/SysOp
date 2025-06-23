@@ -1,5 +1,6 @@
 #pragma once
 #include <unistd.h>
+#include <mutex>
 #include "memory.hpp"
 #include "programas.hpp"
 #include "cpu.hpp"
@@ -8,6 +9,7 @@
 
 extern char debug;
 extern char flag;
+mutex mtxBloq;
 
 HW::HW(Memory *mp, Memory *ms, int tamPag){
     memP = mp;
@@ -30,7 +32,8 @@ void InterruptHandling::handle(Interrupts irpt, PCB *p){
 
 //===================================//
 
-SysCallHandling::SysCallHandling(HW *_hw){
+SysCallHandling::SysCallHandling(HW *_hw, int tamP){
+    tamPag = tamP;
     hw = _hw;}
 
 SysCallHandling::~SysCallHandling(){}
@@ -38,15 +41,18 @@ SysCallHandling::~SysCallHandling(){}
 void SysCallHandling::stop(PCB *p){
     cout << "ID: " << p->id << ", Nome: " << p-> nome << " -> SYSCALL STOP" << endl;}
 
-void SysCallHandling::handle(){
+void SysCallHandling::handle(PCB *p){
     cout << "SYSCALL pars: " << hw->cpu->reg[8] <<  " / " << hw->cpu->reg[9] << endl;
-
-    switch(hw->cpu->reg[8]){
+    switch(p->regs[8]){
         case 1: // leitura ...
-                break;
+            cout << "Syscall (IN) -> " << p->nome << " esperando input " << endl;
+            cin >> hw->memS->pos[p->tabPagS[(p->regs[9]/tamPag)]*tamPag + p->regs[9]%tamPag].p;
+            cout << "IN: " << hw->memS->pos[p->tabPagS[(p->regs[9]/tamPag)]*tamPag + p->regs[9]%tamPag].p << endl;
+            break;
         case 2: // escrita - escreve o conteuodo da memoria na posicao dada em reg[9]
-                cout << "OUT: " << hw->memP->pos[hw->cpu->reg[9]].p << endl;
-                break;
+            cout << "Syscall (OUT) -> " << p->nome << endl;
+            cout << "OUT: " << hw->memS->pos[p->tabPagS[(p->regs[9]/tamPag)]*tamPag + p->regs[9]%tamPag].p << endl;
+            break;
         default: cout << "  PARAMETRO INVALIDO" << endl;}}
 
 //===================================//
@@ -85,7 +91,8 @@ void Utilities::loadAndExec(Program *p){
 
 //===================================//
 
-Escalonador::Escalonador(HW *h, Memory *mp, Memory *ms, int tamP, int tamMP, int tamMS, char t){
+Escalonador::Escalonador(HW *h, Memory *mp, Memory *ms, int tamP, int tamMP, int tamMS, char t, SysCallHandling *s){
+    sc = s;
     trace = t;
     hw = h;
     gp = new GP(mp, ms, tamP, tamMP, tamMS);}
@@ -129,30 +136,34 @@ void Escalonador::pageFaultRun(){
     int i = 0;
     PCB *p;
     while(flag){
+		//lock_guard<mutex> lock(mtxBloq);
         if(bloqueado.size() <= 0) continue;
         if(i >= bloqueado.size()) i = 0;
         p = bloqueado[i];
-        if(p->irpt == pageFault){
+        cout << "" << "" << "";
+        if(p != nullptr && p->irpt == pageFault){
             if(debug) cout << "Tratando PageFault do " << p->nome << endl;
             gp->alocaMemSecundaria(p);
             p->irpt = noInterrupt;
             executando.push_back(p);
-            for(int j = 0; j < bloqueado.size(); j++)
+            for(int j = 0; j < bloqueado.size(); j++){
                 if(p->id == bloqueado[j]->id){
                     bloqueado.erase(bloqueado.begin() + j);
-                    break;}}
+                    break;}}}
         i++;}}
 
 void Escalonador::IORun(){
     int i = 0;
     PCB *p;
     while(flag){
+		//lock_guard<mutex> lock(mtxBloq);
         if(bloqueado.size() <= 0) continue;
         if(i >= bloqueado.size()) i = 0;
         p = bloqueado[i];
-        if(p->irpt == IO){
+        cout << "" << "" << "";
+        if(p != nullptr && p->irpt == IO){
             if(debug) cout << "Tratando IO do " << p->nome << endl;
-            //gp->alocaMemSecundaria(p);
+            sc->handle(p);
             p->irpt = noInterrupt;
             executando.push_back(p);
             for(int j = 0; j < bloqueado.size(); j++)
@@ -165,9 +176,9 @@ void Escalonador::IORun(){
 //===================================//
 
 SO::SO(HW *hw, Memory *memP, Memory *memS, int tamP, int tamMP, int tamMS){
-    esc = new Escalonador(hw, memP, memS, tamP, tamMP, tamMS, true);
 	ih = new InterruptHandling(hw);
-	sc = new SysCallHandling(hw);
+	sc = new SysCallHandling(hw, tamP);
+    esc = new Escalonador(hw, memP, memS, tamP, tamMP, tamMS, true, sc);
 	hw->cpu->setAddressOfHandlers(ih, sc);
 	utils = new Utilities(hw);}
 

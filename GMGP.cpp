@@ -63,7 +63,7 @@ int GM::alocaMemSec(int *pagsS){
         if(usou[clock]) usou[clock] = 0;
         else break;
         if(++clock >= qntPagS) clock = 0;}
-    if(debug) cout << "Vitimando pag " << clock << " da memoria secundaria" << endl;
+    if(debug) cout << "Vitimando pag " << clock << endl;
     usou[clock] = 1;
     return clock;}
 

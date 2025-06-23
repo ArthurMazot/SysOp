@@ -25,10 +25,11 @@ struct InterruptHandling{
 
 struct SysCallHandling{
     HW *hw;
-    SysCallHandling(HW*);
+    int tamPag;
+    SysCallHandling(HW*, int);
     ~SysCallHandling();
     void stop(PCB*);
-    void handle();
+    void handle(PCB*);
 };
 
 struct Utilities{
@@ -44,11 +45,12 @@ struct Utilities{
 struct Escalonador{
     vector<PCB*> executando;
     vector<PCB*> bloqueado;
+    SysCallHandling *sc;
     HW *hw;
     GP *gp;
     char trace;
 
-    Escalonador(HW*, Memory*, Memory*, int, int, int, char);
+    Escalonador(HW*, Memory*, Memory*, int, int, int, char, SysCallHandling*);
     ~Escalonador();
     void addExec(PCB*);
     void rmExec(int);

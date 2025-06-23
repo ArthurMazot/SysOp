@@ -66,9 +66,9 @@ Interrupts CPU::run(PCB *p){
 
             switch (ir.opc){
                 case LDI:
-                reg[ir.ra] = ir.p;
-                pc++;
-                break;
+                    reg[ir.ra] = ir.p;
+                    pc++;
+                    break;
 
                 case LDD:
                 if(legal(ir.p, p)){
@@ -115,6 +115,8 @@ Interrupts CPU::run(PCB *p){
                         
                         int e = logicoFisico(reg[ir.ra], p);
                         mem->pos[e].opc = DATA;
+                        mem->pos[e].ra = -1;
+                        mem->pos[e].rb = -1;
                         mem->pos[e].p = reg[ir.rb];
                         pc++;}
                     break;
@@ -250,10 +252,17 @@ Interrupts CPU::run(PCB *p){
                     break;
 
                 case SYSCALL:
-                    sysCall->handle();
-                    irpt = IO;
+                    savePCB(p);
+                    if(legal(p->regs[9], p))
+                        if(p->tabPagS[p->regs[9]/tamPag] == -1){
+                            p->end = p->regs[9];
+                            p->irpt = pageFault;
+                            return pageFault;}
+                    
+                    p->irpt = IO;
                     pc++;
-                    break;
+                    savePCB(p);
+                    return IO;
 
                 case STOP:
                     sysCall->stop(p);

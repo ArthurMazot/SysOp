@@ -53,20 +53,20 @@ void Sistema::dump(int id){
 			cout << prontos[id-1]->regs[j] << ", "; 
 		cout << prontos[id-1]->regs[9] << "]" << endl;
 
-		cout << "Memoria Principal" << endl;
+		cout << "Disco" << endl;
 		for(int j = 0; j < prontos[id-1]->tabPagP[0]; j++)
 			dumpMP(prontos[id-1]->tabPagP[j+1]*tamPag, prontos[id-1]->tabPagP[j+1]*tamPag + tamPag);
 		cout << "==============================" << endl;
-		cout << "Memoria Secundaria" << endl;
+		cout << "Memória Principal" << endl;
 		for(int j = 0; j < prontos[id-1]->tabPagP[0]; j++)
 			if(prontos[id-1]->tabPagS[j] != -1)
-				dumpMS(prontos[id-1]->tabPagS[j]*tamPag, prontos[id-1]->tabPagS[j]*tamPag + tamPag);
+				dumpMP(prontos[id-1]->tabPagS[j]*tamPag, prontos[id-1]->tabPagS[j]*tamPag + tamPag);
 		}}
 
-void Sistema::dumpMP(int inicio, int fim){
+void Sistema::dumpD(int inicio, int fim){
 	while(inicio < fim) cout << inicio << ": " << memP->pos[inicio++] << endl;}
 
-void Sistema::dumpMS(int inicio, int fim){
+void Sistema::dumpMP(int inicio, int fim){
 	while(inicio < fim) cout << inicio << ": " << memS->pos[inicio++] << endl;}
 
 void Sistema::execAll(){

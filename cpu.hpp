@@ -20,7 +20,7 @@ struct CPU{
 
     CPU(Memory*, int);
     ~CPU();
-    int logicoFisico(int e, PCB *p);
+    int logicoFisico(int, PCB*);
     void savePCB(PCB*);
     void loadPCB(PCB*);
     void setAddressOfHandlers(InterruptHandling*, SysCallHandling*);

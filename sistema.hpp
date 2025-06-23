@@ -18,8 +18,8 @@ struct Sistema{
 	void rm(int);
 	void ps();
 	void dump(int);
+	void dumpD(int, int);
 	void dumpMP(int, int);
-	void dumpMS(int, int);
 	void exec(int);
 	void execAll();
 };
