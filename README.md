@@ -8,7 +8,7 @@ O objetivo foi compreender em profundidade o funcionamento interno de um sistema
 
 - CPU simulada em software — execução de instruções e controle de fluxo
 - Gerente de Processos — criação, controle e encerramento de processos
-- Escalonador FIFO — fila de processos com política First In, First Out
+- Escalonador Round-robin — cada processo tem um tempo igual de uso e CPU
 - Gerente de Memória — alocação e liberação de memória física
 - Memória Virtual — implementada com paginação + segmentação
 - Chamadas de Sistema (syscalls) — interface entre processos e o kernel simulado
@@ -30,7 +30,7 @@ O objetivo foi compreender em profundidade o funcionamento interno de um sistema
 
 ## Conceitos Aplicados
 
-- Escalonamento de processos (FIFO)
+- Escalonamento de processos (Round-robin)
 - Gerência de memória física
 - Memória virtual com paginação e segmentação
 - Chamadas de sistema (syscalls)
