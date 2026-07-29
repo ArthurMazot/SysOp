@@ -37,4 +37,9 @@ O objetivo foi compreender em profundidade o funcionamento interno de um sistema
 - Simulação de CPU em software
 - Programação orientada a objetos em C++
 
-Projeto desenvolvido em dupla como trabalho acadêmico da PUCRS — Curso de Engenharia de Computação.
+## Colaboradores
+
+- Arthur Mazot [https://github.com/ArthurMazot]
+- Virgínia Muller [https://github.com/virginiasm]
+
+Projeto desenvolvido como trabalho acadêmico da PUCRS — Curso de Engenharia de Computação.
